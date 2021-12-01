@@ -44,43 +44,40 @@ SingleCellData <- NormalizeData(SingleCellData, normalization.method = "LogNorma
 SingleCellData[["RNA"]]@data[1:5,1:5]
 
 
-
 ```
 
-
-## Feature selection
+## Feature selection 
 ```{r}
 
 SingleCellData <- FindVariableFeatures(object = SingleCellData, selection.method="vst", nfeatures = 2000)
 
+
 ```
 
-
-## Scale the data
+## Scale the data 
 ```{r}
 SingleCellData <- ScaleData(SingleCellData, do.center = TRUE, do.scale = TRUE)
 SingleCellData[["RNA"]]@scale.data[1:5,1:5]
-
-
 ```
+
 
 ## Linear dimension reduction
 ```{r}
-SingleCellData <- RunPCA(SingleCellData, features = VariableFeatures(object = SingleCellData))
 
+SingleCellData <- RunPCA(SingleCellData, features = VariableFeatures(object = SingleCellData))
 ```
 
 
-## Graph construction
+## Graph 
 ```{r}
 
 SingleCellData <- FindNeighbors(SingleCellData, dims = 1:50) 
 
-#SingleCellData@graphs$RNA_snn # Adjacency matrix
+SingleCellData@graphs$RNA_snn[1:5,1:5] # Adjacency matrix
 ```
 
 
-#How to use Robin
+# How to use Robin
 
 ## Reading Graph
 ```{r}
@@ -97,8 +94,8 @@ graph
 
 
 
-## Compare different algorithm vs Louvain
-to see which is the algorithm that better fits the network
+## Compare all algorithms vs Louvain
+We apply the compare procedure to see which is the algorithm that better fits our network.
 ```{r}
 #Infomap
  comp_I <- robinCompare(graph=graph, method1="louvain",
@@ -115,20 +112,14 @@ comp_W <- robinCompare(graph=graph, method1="louvain",
 
 #LabelProp
 comp_La <- robinCompare(graph=graph, method1="louvain",
-                        method2="labelProp", measure="vi", type="independent",verbose=TRUE)
+                        method2="labelProp", measure="vi", type="independent")
 
-
-
-
-#LeadingEigen
-comp_Le <- robinCompare(graph=graph, method1="louvain",
-                        method2="leadingEigen", measure="vi", type="independent",verbose=TRUE)
 
 
 
 #Fastgreedy
 comp_F <- robinCompare(graph=graph, method1="louvain",
-                        method2="fastGreedy", measure="vi", type="independent",verbose=TRUE)
+                        method2="fastGreedy", measure="vi", type="independent")
 
 
 ###Plots:
@@ -149,16 +140,23 @@ measure="vi", legend=c("louvain", "fastGreedy"))
 
 
 
-plot5 <- plotRobin(graph=graph, model1=comp_Le$Mean1, model2=comp_Le$Mean2,
-measure="vi", legend=c("louvain", "LeadingEigen"))
 
 
-PlotComparisonAllVsInfomap <- gridExtra::grid.arrange(plot1,plot2,plot3,plot4,plot5,ncol=2)
+
+PlotComparisonAllVsInfomap <- gridExtra::grid.arrange(plot1,plot2,plot3,plot4, ncol=2)
 
 
 ```
 
+
+The lowest curve is the most stable algorithm. Louvain and Walktrap are the best algorithms in our example. 
+
+
+
 ## Statistical significance of communities
+
+Due to the fact that Louvain is one of the best algorithm for our network we apply the robust procedure with the Louvain algorithm to see if the communities that it gives are statistically significant.
+
 ```{r}
 graphRandom <- random(graph=graph)
 proc <-robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
@@ -166,5 +164,13 @@ measure="vi",type="independent")
 
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 measure="vi", legend=c("real data", "null model"))
+
+
+
+robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
+measure="vi",legend=c("real data", "null model"))
+
+robinGPTest(model1=proc$Mean,model2=proc$MeanRandom)
 ```
 
+The communities given by Louvain are statistically significant.
