@@ -10,3 +10,7 @@ Robin gives the possibility to choose the community detection algorithm that **b
 
 Cite:
 https://journal.r-project.org/archive/2021/RJ-2021-040/RJ-2021-040.pdf
+
+
+
+file:///E:/GitHub/robin-on-Single-Cell-RNASeq/RobinSingleCellVignette.html
