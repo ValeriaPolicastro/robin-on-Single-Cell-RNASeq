@@ -155,7 +155,7 @@ The lowest curve is the most stable algorithm. Louvain and Walktrap are the best
 
 ## Statistical significance of communities
 
-Due to the fact that Louvain is one of the best algorithm for our network we apply the robust procedure with the Louvain algorithm to see if the communities that it gives are statistically significant.
+Due to the fact that Louvain is one of the best algorithm for our network we apply the robust procedure with the Louvain algorithm to see if the communities detected are statistically significant.
 
 ```{r}
 graphRandom <- random(graph=graph)
