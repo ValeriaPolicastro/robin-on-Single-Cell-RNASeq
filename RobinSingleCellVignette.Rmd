@@ -98,45 +98,41 @@ graph
 We apply the compare procedure to see which is the algorithm that better fits our network.
 ```{r}
 #Infomap
- comp_I <- robinCompare(graph=graph, method1="louvain",
-                        method2="infomap", measure="vi", type="independent")
+ comp_I <- robinCompareFast(graph=graph, method1="louvain",
+                        method2="infomap", measure="vi")
  
 
 
 #Walktrap
-comp_W <- robinCompare(graph=graph, method1="louvain",
-                       method2="walktrap", measure="vi", type="independent")
+comp_W <- robinCompareFast(graph=graph, method1="louvain",
+                       method2="walktrap", measure="vi")
 
 
 
 
 #LabelProp
-comp_La <- robinCompare(graph=graph, method1="louvain",
-                        method2="labelProp", measure="vi", type="independent")
+comp_La <- robinCompareFast(graph=graph, method1="louvain",
+                        method2="labelProp", measure="vi")
 
 
 
 
 #Fastgreedy
-comp_F <- robinCompare(graph=graph, method1="louvain",
-                        method2="fastGreedy", measure="vi", type="independent")
+comp_F <- robinCompareFast(graph=graph, method1="louvain",
+                        method2="fastGreedy", measure="vi")
 
 
 ###Plots:
-plot1 <- plotRobin(graph=graph, model1=comp_I$Mean1, model2=comp_I$Mean2,
-measure="vi", legend=c("louvain","infomap"))
+plot1 <- plotRobin(graph=graph, model1=comp_I$Mean1, model2=comp_I$Mean2, legend=c("louvain","infomap"))
 
 
-plot2 <- plotRobin(graph=graph, model1=comp_La$Mean1, model2=comp_La$Mean2,
-measure="vi", legend=c("louvain","labelProp"))
+plot2 <- plotRobin(graph=graph, model1=comp_La$Mean1, model2=comp_La$Mean2, legend=c("louvain","labelProp"))
 
 cols <- c("model1" = "#00BFC4", "model2" = "#F8766D") 
-plot3 <- plotRobin(graph=graph, model1=comp_W$Mean1, model2=comp_W$Mean2,
-measure="vi")+ggplot2::scale_colour_manual(values = cols,breaks = c("model1", "model2"), labels=c("louvain", "walktrap"))
+plot3 <- plotRobin(graph=graph, model1=comp_W$Mean1, model2=comp_W$Mean2)+ggplot2::scale_colour_manual(values = cols,breaks = c("model1", "model2"), labels=c("louvain", "walktrap"))
 
 
-plot4 <- plotRobin(graph=graph, model1=comp_F$Mean1, model2=comp_F$Mean2,
-measure="vi", legend=c("louvain", "fastGreedy"))
+plot4 <- plotRobin(graph=graph, model1=comp_F$Mean1, model2=comp_F$Mean2, legend=c("louvain", "fastGreedy"))
 
 
 
@@ -162,13 +158,11 @@ graphRandom <- random(graph=graph)
 proc <-robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 measure="vi",type="independent")
 
-plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
-measure="vi", legend=c("real data", "null model"))
+plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, legend=c("real data", "null model"))
 
 
 
-robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
-measure="vi",legend=c("real data", "null model"))
+robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, legend=c("real data", "null model"))
 
 robinGPTest(model1=proc$Mean,model2=proc$MeanRandom)
 ```
